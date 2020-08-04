@@ -1,3 +1,11 @@
+MYPY = False
+if MYPY:
+    # MYPY is set to True when run under Mypy.
+    from typing import Any
+    from typing import Dict
+    from typing import Optional
+    from typing import Text
+
 class GitHubChecksOutputter(object):
     """Provides a method to output data to be shown in the GitHub Checks UI.
 
@@ -8,9 +16,11 @@ class GitHubChecksOutputter(object):
     See https://docs.taskcluster.net/docs/reference/integrations/github/checks#custom-text-output-in-checks
     """
     def __init__(self, path):
+        # type: (Text) -> None
         self.path = path
 
     def output(self, line):
+        # type: (Any) -> None
         with open(self.path, 'a') as f:
             f.write(line)
             f.write('\n')
@@ -18,6 +28,7 @@ class GitHubChecksOutputter(object):
 
 __outputter = None
 def get_gh_checks_outputter(kwargs):
+    # type: (Dict[Text, Text]) -> Optional[GitHubChecksOutputter]
     """Return the outputter for GitHub Checks output, if enabled.
 
     :param kwargs: The arguments passed to the program (to look for the
