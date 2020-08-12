@@ -45,21 +45,26 @@ function loadScript(path) {
  *   bindings should be of the form '/gen/../*.mojom.js', the ordering of which
  *   does not matter. Do not include mojo_bindings.js in this list. You may
  *   include other non-mojom.js scripts for convenience.
+ * @param {string} [genPrefix] - Override the default prefix "/gen" used for
+ *   loading mojo_bindings.js.
  * @returns {Promise}
  */
-async function loadMojoResources(resources) {
+async function loadMojoResources(resources, genPrefix) {
   if (!isChromiumBased) {
     throw new Error('MojoJS not enabled; start Chrome with --enable-blink-features=MojoJS,MojoJSTest');
   }
   if (resources.length == 0) {
     return;
   }
+  if (typeof genPrefix === 'undefined') {
+    genPrefix = '/gen';
+  }
 
   // We want to load mojo_bindings.js separately to set mojo.config.
   if (resources.some(p => p.endsWith('/mojo_bindings.js'))) {
     throw new Error('Do not load mojo_bindings.js explicitly.');
   }
-  await loadScript('/gen/layout_test_data/mojo/public/js/mojo_bindings.js');
+  await loadScript(`${genPrefix}/layout_test_data/mojo/public/js/mojo_bindings.js`);
   mojo.config.autoLoadMojomDeps = false;
 
   for (const path of resources) {
